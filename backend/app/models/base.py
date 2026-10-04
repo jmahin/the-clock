@@ -7,7 +7,7 @@ class LifespanModel(Protocol):
     """Swap point for real models. Implement this and set it in app/main.py."""
 
     def options(self) -> OptionsResponse:
-        """Selectable sexes / ethnicities / locations / lifestyle factors."""
+        """Selectable sex categories and model-supported profile factors."""
         ...
 
     def estimate(self, req: EstimateRequest) -> EstimateResponse:

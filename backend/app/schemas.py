@@ -1,5 +1,7 @@
 """API contract. Keep in sync with frontend/src/types.ts."""
 
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -17,17 +19,13 @@ class Factor(BaseModel):
 
 class OptionsResponse(BaseModel):
     sexes: list[Choice]
-    ethnicities: list[Choice]
-    locations: list[Choice]
     factors: list[Factor]
 
 
 class EstimateRequest(BaseModel):
-    age: float = Field(ge=0, le=110)
+    age: float = Field(ge=20, le=100)
     sex: str
-    ethnicity: str
-    location: str
-    # factor id -> option id. Missing factors fall back to their default option.
+    # factor id -> option id. Missing factors use the model's reference level.
     factors: dict[str, str] = Field(default_factory=dict)
 
 
@@ -51,6 +49,13 @@ class EngineInfo(BaseModel):
 class EstimateResponse(BaseModel):
     expected_age: float  # expected age at death
     remaining_years: float
-    baseline_expected_age: float  # same person with every factor at its default
+    baseline_expected_age: float  # same age/sex at the model's reference profile
+    expected_age_2021: float
+    expected_age_at_death_95_interval: list[float]
+    relative_mortality_factor: float
+    relative_mortality_factor_95_interval: list[float]
+    one_year_death_probability: Optional[float]
+    five_year_death_probability: Optional[float]
+    ten_year_death_probability: Optional[float]
     factor_impacts: list[FactorImpact]
     engine: EngineInfo

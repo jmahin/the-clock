@@ -14,16 +14,12 @@ export interface Factor {
 
 export interface Options {
   sexes: Choice[];
-  ethnicities: Choice[];
-  locations: Choice[];
   factors: Factor[];
 }
 
 export interface Profile {
   age: number;
   sex: string;
-  ethnicity: string;
-  location: string;
 }
 
 export interface EstimateRequest extends Profile {
@@ -39,6 +35,13 @@ export interface Estimate {
   expected_age: number;
   remaining_years: number;
   baseline_expected_age: number;
+  expected_age_2021: number;
+  expected_age_at_death_95_interval: [number, number];
+  relative_mortality_factor: number;
+  relative_mortality_factor_95_interval: [number, number];
+  one_year_death_probability: number | null;
+  five_year_death_probability: number | null;
+  ten_year_death_probability: number | null;
   factor_impacts: FactorImpact[];
   engine: { name: string; placeholder: boolean };
 }
