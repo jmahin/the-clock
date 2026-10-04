@@ -32,3 +32,4 @@ Contract lives in `backend/app/schemas.py` and `frontend/src/types.ts`; keep the
 `app/models/gompertz.py` is a **placeholder**: Gompertz proportional-hazards baseline fed by approximate constants in `app/data/placeholder.py` (life expectancy by country/sex, hand-set hazard ratios, ethnicity HR = 1.0). The UI shows a "demo model" warning while `engine.placeholder` is true.
 
 To use real datasets: implement `LifespanModel` (e.g. `app/models/lifetable.py` reading life tables + published hazard ratios from your DB), return `EngineInfo(placeholder=False)`, and change the `model` import in `app/main.py`. The frontend needs no changes unless you add fields.
+# the-clock
