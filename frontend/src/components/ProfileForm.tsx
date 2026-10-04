@@ -1,64 +1,56 @@
-import type { Choice, Options, Profile } from "../types";
+import { useEffect, useState } from "react";
+import type { Choice, Profile } from "../types";
 
 interface Props {
-  options: Options;
+  sexes: Choice[];
   profile: Profile;
-  onChange: (p: Profile) => void;
+  onChange: (profile: Profile) => void;
+  ethnicity: string;
+  onEthnicityChange: (value: string) => void;
 }
 
-function Select({
-  label,
-  value,
-  choices,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  choices: Choice[];
-  onChange: (v: string) => void;
-}) {
-  return (
-    <label className="field">
-      <span>{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)}>
-        {choices.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
+const ETHNICITIES = [
+  ["asian", "Asian"], ["black", "Black"], ["hispanic", "Hispanic / Latino"],
+  ["white", "White"], ["other", "Other / mixed"],
+];
+export default function ProfileForm({ sexes, profile, onChange, ethnicity, onEthnicityChange }: Props) {
+  const [ageInput, setAgeInput] = useState(String(profile.age));
+  useEffect(() => setAgeInput(String(profile.age)), [profile.age]);
 
-export default function ProfileForm({ options, profile, onChange }: Props) {
   const set = (patch: Partial<Profile>) => onChange({ ...profile, ...patch });
+  const commitAge = () => {
+    const parsed = Number.parseInt(ageInput, 10);
+    const age = Math.min(100, Math.max(20, Number.isNaN(parsed) ? 20 : parsed));
+    setAgeInput(String(age));
+    if (age !== profile.age) set({ age });
+  };
   return (
-    <section className="panel">
-      <h2>About you</h2>
+    <div className="profile-questions">
       <label className="field">
-        <span>Age</span>
+        <span><b>01</b> Current age <small>20–100</small></span>
         <input
-          type="number"
-          min={0}
-          max={110}
-          value={profile.age}
-          onChange={(e) => set({ age: Math.min(110, Math.max(0, Number(e.target.value) || 0)) })}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={ageInput}
+          onChange={(event) => setAgeInput(event.target.value.replace(/\D/g, "").slice(0, 3))}
+          onBlur={commitAge}
         />
       </label>
-      <Select label="Sex" value={profile.sex} choices={options.sexes} onChange={(sex) => set({ sex })} />
-      <Select
-        label="Ethnicity"
-        value={profile.ethnicity}
-        choices={options.ethnicities}
-        onChange={(ethnicity) => set({ ethnicity })}
-      />
-      <Select
-        label="Location"
-        value={profile.location}
-        choices={options.locations}
-        onChange={(location) => set({ location })}
-      />
-    </section>
+      <label className="field">
+        <span><b>02</b> Sex</span>
+        <select value={profile.sex} onChange={(event) => set({ sex: event.target.value })}>
+          {sexes.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
+        </select>
+      </label>
+      <div className="optional-context">
+        <label className="field">
+          <span>Ethnicity <small>Not used by this model</small></span>
+          <select value={ethnicity} onChange={(event) => onEthnicityChange(event.target.value)}>
+            {ETHNICITIES.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+          </select>
+        </label>
+      </div>
+    </div>
   );
 }

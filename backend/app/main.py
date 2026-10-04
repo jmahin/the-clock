@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 
-from app.models.gompertz import model
+from app.models.soa_nhanes import model
 from app.schemas import EstimateRequest, EstimateResponse, OptionsResponse
 
 app = FastAPI(title="Life Clock API")
